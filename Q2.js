@@ -33,7 +33,7 @@ function parseUrl(url){
             result.params = params
         }
     }else{
-        throw new TypeError('不是一个地址')
+        throw new TypeError('没有协议头')
     }
     return result
 }
