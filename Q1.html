@@ -61,18 +61,63 @@
                 })
                 return types
             })(mockData)
-            // 渲染页面
+            // 渲染
             let appNode = document.querySelector('#app')
-            for(let i=0;i<selectoptions.length;i++){
-                let selectNode = document.createElement('select')
+            for (let i = 0; i < selectoptions.length; i++) {
                 let type = selectoptions[i]
+                drawFunction(type, i)
+            }
+            // select标签
+            function drawFunction(type, i) {
+                let selectNode = document.createElement('select')
+                selectNode.addEventListener('change', selectChange)
                 appNode.appendChild(selectNode)
-                type.options.forEach(ele=>{
-                    let optionElement = document.createElement('option')
-                    optionElement.innerText = ele.displayName
-                    optionElement.value = ele.id
-                    selectNode.appendChild(optionElement)
-                })
+                selectNode.id = type.name
+                selectNode.className = `${i}`
+                if (i === 0) {
+                    type.options.forEach(ele => {
+                        drawOption(selectNode, ele)
+                    })
+                } else {
+                    const selectedIndex = document.querySelector(`#${selectoptions[i - 1].name}`).selectedIndex
+                    let selectId = selectoptions[i - 1].options[selectedIndex].id
+                    type.options.forEach(ele => {
+                        if (ele.parentId === selectId) {
+                            drawOption(selectNode, ele)
+                        }
+                    })
+                }
+            }
+            // option标签
+            function drawOption(selectNode, ele) {
+                let optionElement = document.createElement('option')
+                optionElement.innerText = ele.displayName
+                optionElement.value = ele.id
+                selectNode.appendChild(optionElement)
+            }
+            // 选择改变后的change事件
+            function selectChange(e) {
+                const typeIndex = parseInt(e.target.className)
+                for (let index = typeIndex; index < selectoptions.length; index++) {
+                    if ((index + 1) < selectoptions.length) {
+                        let needChangeNode = document.querySelector(`#${selectoptions[index + 1].name}`)
+                        let deleteArr = needChangeNode.querySelectorAll('option')
+                        for (let i = deleteArr.length; i > 0; i--) {
+                            needChangeNode.removeChild(deleteArr[i - 1])
+                        }
+                        const selectNode = document.querySelector(`#${selectoptions[index].name}`)
+                        const selectedIndex = selectNode.selectedIndex
+                        const optionsArr = selectNode.querySelectorAll(`option`)
+                        const selectId = optionsArr[selectedIndex].value
+                        selectoptions[index + 1].options.forEach(ele => {
+                            if (ele.parentId === parseInt(selectId)) {
+                                drawOption(needChangeNode, ele)
+                            }
+                        })
+                    }
+
+                }
+
             }
         }
     </script>

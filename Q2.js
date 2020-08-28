@@ -7,7 +7,7 @@ function parseUrl(url){
         return false
     }
     let result={}
-    const urlSplit = url.split('?')[1]
+    const urlSplit = url.split('?')[1].split('#')[0]
 
     // 判定是否含协议头
     if(url.indexOf('http://')===0 || url.includes('https://')===0){
@@ -28,7 +28,11 @@ function parseUrl(url){
             const arr = str.split('&')
             // 遍历数组
             for (var i = 0; i < arr.length; i++) {
-                params[arr[i].split('=')[0]] = unescape(arr[i].split('=')[1])
+                if(params[arr[i].split('=')[0]]){
+                    params[arr[i].split('=')[0]] = [unescape(arr[i].split('=')[1])].concat(params[arr[i].split('=')[0]])
+                }else{
+                    params[arr[i].split('=')[0]] = unescape(arr[i].split('=')[1])
+                }
             }
             result.params = params
         }
